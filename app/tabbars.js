@@ -1,5 +1,19 @@
 import React, { Component } from 'react';
-import { Button, ScrollView, Text, View, TextInput, ListView, Image, StyleSheet, Dimensions} from 'react-native';
+
+import {
+  Button,
+  ScrollView,
+  Text,
+  View,
+  TextInput,
+  ListView,
+  Image,
+  StyleSheet,
+  Dimensions,
+  RefreshControl,
+  TouchableHighlight
+} from 'react-native';
+
 import { StackNavigator, TabNavigator } from 'react-navigation';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -27,7 +41,7 @@ const MyNavScreen = ({ navigation, banner }) => (
 
 let { height, width } = Dimensions.get('window');
 let imageWidth = 100;
-let imageHeight = 100;
+let imageHeight = 150;
 let colMargin = 5;
 let rightColWidth = width - 5 - imageWidth;
 
@@ -59,35 +73,45 @@ const movieStyles = StyleSheet.create({
   content: {
 
   }
-
 })
-
 
 
 class Movie extends Component {
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      data: props.data
+    };
+  }
+
+  onClicked() {
+    this.props.navigation.navigate('Detail', { id: 'Jordan' })
+  }
+
   render() {
     return (
-      <View style={movieStyles.container}>
-        <View style={movieStyles.leftCol}>
-          <Image
-            style={movieStyles.image}
-            source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}>
-          </Image>
+      <TouchableHighlight underlayColor='transparent' onPress={ this.onClicked.bind(this) }>
+        <View style={movieStyles.container}>
+          <View style={movieStyles.leftCol}>
+            <Image
+              style={movieStyles.image}
+              source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}>
+            </Image>
+          </View>
+
+          <View style={movieStyles.rightCol}>
+            <Text style={movieStyles.title}>Lorem Ipsum is simply dummy</Text>
+
+            <Text style={movieStyles.content}>Lorem Ipsum is simply dummy text of the printing
+              and typesetting industry.
+              Lorem Ipsum has been the industry's standard dummy text ever since the
+            </Text>
+
+          </View>
         </View>
-
-        <View style={movieStyles.rightCol}>
-          <Text style={movieStyles.title}>Lorem Ipsum is simply dummy text of the printing
-            and typesetting industry
-          </Text>
-
-          <Text style={movieStyles.content}>Lorem Ipsum is simply dummy text of the printing
-            and typesetting industry.
-            Lorem Ipsum has been the industry's standard dummy text ever since the
-          </Text>
-
-        </View>
-      </View>
+      </TouchableHighlight>
     )
   }
 }
@@ -100,14 +124,30 @@ class PlayingScreen extends Component {
 
     this.state = {
       dataSource: ds.cloneWithRows(['row 1', 'row 2']),
+      refreshing: false
     };
+  }
+
+  onRefresh() {
+    this.setState({refreshing: true})
+
+    setTimeout( () => {
+      this.setState({refreshing: false})
+    }, 1000)
+  }
+
+  renderRowData(rowData) {
+    return (
+      <Movie data={rowData} navigation={this.props.navigation}/>
+    )
   }
 
   render() {
     return (
       <ListView
         dataSource={this.state.dataSource}
-        renderRow={(rowData) => ( <Movie/> )}
+        refreshControl={ <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} /> }
+        renderRow={(rowData) => this.renderRowData(rowData)}
       />
     )
   }
@@ -138,7 +178,7 @@ const PlayingTab = StackNavigator({
     path: '/',
     navigationOptions: {
       header: (props) => { return (
-        <View style={{marginTop: 20}}>
+        <View style={{marginTop: 25}}>
           <Search
             ref="search_box"
             /**
