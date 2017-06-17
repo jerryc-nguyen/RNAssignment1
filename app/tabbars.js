@@ -153,16 +153,59 @@ class PlayingScreen extends Component {
   }
 }
 
-// const PlayingScreen = ({ navigation }) => (
-//   <Text>aa</Text>
-// );
+let styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // or 'stretch'
+  },
+  fixedBottom: {
+    width:320,
+    position: 'absolute',
+    bottom: 20,
+    left: (width - 320)/2,
+    right: 0
+  }
+});
 
-const DetailMovieScreen = ({ navigation }) => (
-  <MyNavScreen
-    banner= "DetailMovieScreen banner"
-    navigation={navigation}
-  />
-);
+
+class MovieDetailScreen extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      data: props.data
+    };
+  }
+
+  onClicked() {
+    this.props.navigation.navigate('Detail', { id: 'Jordan' })
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Image source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}} style={styles.backgroundImage} />
+
+        <View style={styles.fixedBottom}>
+          <Text>Lorem Ipsum is simply dummy text of the printing</Text>
+          <Text>2017-02-28</Text>
+          <View>
+            <Text>69%</Text>
+            <Text>2 hour 21 minutes</Text>
+          </View>
+          <Text>
+            Lorem Ipsum is simply dummy text of the printing
+              and typesetting industry.
+          </Text>
+        </View>
+      </View>
+    )
+  }
+}
 
 const MyNotificationsSettingsScreen = ({ navigation }) => (
   <MyNavScreen banner="Notifications Screen" navigation={navigation} />
@@ -173,6 +216,13 @@ const MySettingsScreen = ({ navigation }) => (
 );
 
 const PlayingTab = StackNavigator({
+  Detail: {
+    screen: MovieDetailScreen,
+    path: '/movie-detail',
+    navigationOptions: ({ navigation }) => ({
+      title: "Detail screen",
+    }),
+  },
   Playing: {
     screen: PlayingScreen,
     path: '/',
@@ -189,14 +239,8 @@ const PlayingTab = StackNavigator({
         </View>
       ) }
     },
-  },
-  Detail: {
-    screen: DetailMovieScreen,
-    path: '/movies/:id',
-    navigationOptions: ({ navigation }) => ({
-      title: "Detail screen",
-    }),
-  },
+  }
+
 });
 
 const SettingsTab = StackNavigator({
@@ -219,7 +263,7 @@ const StacksInTabs = TabNavigator(
   {
     PlayingTab: {
       screen: PlayingTab,
-      path: '/',
+      path: '/movie-detail',
       navigationOptions: {
         tabBarLabel: 'Now Playing',
         tabBarIcon: ({ tintColor, focused }) => {
