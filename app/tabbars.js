@@ -88,7 +88,7 @@ class Movie extends Component {
   }
 
   onClicked() {
-    this.props.navigation.navigate('Detail', { id: 'Jordan' })
+    this.props.navigation.navigate('Detail', { movie: this.movie })
   }
 
   posterPath() {
@@ -212,9 +212,7 @@ let styles = StyleSheet.create({
     fontSize: 17
   },
   contentRow: {
-    marginTop: 5,
-    marginBottom: 5,
-    padding: 5
+    padding: 10
   },
   detailTitle: {
     fontSize: 17,
@@ -230,46 +228,45 @@ class MovieDetailScreen extends Component {
 
   constructor(props) {
     super(props)
+    console.log(props.navigation)
+    this.params = props.navigation.state.params
 
     this.state = {
-      movie: props.movie
+      movie: this.params.movie
     };
   }
 
-  onClicked() {
-    this.props.navigation.navigate('Detail', { id: 'Jordan' })
+  backdropPath() {
+    return `https://image.tmdb.org/t/p/original${this.state.movie.backdrop_path}`
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Image source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}} style={styles.backgroundImage} />
+        <Image source={{uri: this.backdropPath()}} style={styles.backgroundImage} />
 
         <View style={styles.fixedBottom}>
           <View style={styles.container}>
             <View style={styles.contentRow}>
-              <Text style={styles.detailTitle}>Lorem Ipsum is simply dummy text of the printing</Text>
+              <Text style={styles.detailTitle}>{this.state.movie.title}</Text>
             </View>
             <View style={styles.contentRow}>
-              <Text>2017-02-28</Text>
+              <Text>{this.state.movie.release_date}</Text>
             </View>
             <View style={styles.contentRow}>
               <View style={styles.rowText}>
                 <View style={styles.rowTextLeft}>
-                  <Ionicons style={styles.icon} name="ios-book" />
-                  <Text>69%</Text>
+                  <Ionicons style={styles.icon} name="ios-star" />
+                  <Text>{this.state.movie.vote_average}</Text>
                 </View>
                 <View style={styles.rowTextRight}>
-                  <Ionicons style={styles.icon} name="ios-book" />
+                  <Ionicons style={styles.icon} name="ios-clock" />
                   <Text>2 hour 21 minutes</Text>
                 </View>
               </View>
             </View>
             <View style={styles.contentRow}>
-              <Text>
-                Lorem Ipsum is simply dummy text of the printing
-                  and typesetting industry.
-              </Text>
+              <Text>{this.state.movie.overview}</Text>
             </View>
           </View>
         </View>
@@ -336,10 +333,10 @@ const StacksInTabs = TabNavigator(
       path: '/movie-detail',
       navigationOptions: {
         tabBarLabel: 'Now Playing',
-        tabBarIcon: ({ tintColor, focused }) => (
-          <Ionicons style={styles.tabbarIcon} name="ios-book" />
-        )
-      },
+        tabBarIcon: ({ tintColor, focused }) => {
+          return ( <Ionicons style={{color: tintColor, fontSize: 30}} name="ios-play" /> )
+        }
+      }
     },
     SettingsTab: {
       screen: SettingsTab,
@@ -347,7 +344,7 @@ const StacksInTabs = TabNavigator(
       navigationOptions: {
         tabBarLabel: 'Top Rated',
         tabBarIcon: ({ tintColor, focused }) => (
-          <Ionicons style={styles.tabbarIcon} name="ios-book" />
+          <Ionicons style={{color: tintColor, fontSize: 30}} name="ios-star" />
         )
       },
     },
