@@ -166,7 +166,38 @@ let styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     left: (width - 320)/2,
-    right: 0
+    right: 0,
+    backgroundColor: "#fff"
+  },
+  rowText: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  rowTextLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: "flex-start"
+  },
+  rowTextRight: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: "flex-end"
+  },
+  icon: {
+    marginRight: 5,
+    fontSize: 17
+  },
+  contentRow: {
+    marginTop: 5,
+    marginBottom: 5,
+    padding: 5
+  },
+  detailTitle: {
+    fontSize: 17,
+    fontWeight: 'bold'
+  },
+  tabbarIcon: {
+    fontSize: 30
   }
 });
 
@@ -191,16 +222,32 @@ class MovieDetailScreen extends Component {
         <Image source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}} style={styles.backgroundImage} />
 
         <View style={styles.fixedBottom}>
-          <Text>Lorem Ipsum is simply dummy text of the printing</Text>
-          <Text>2017-02-28</Text>
-          <View>
-            <Text>69%</Text>
-            <Text>2 hour 21 minutes</Text>
+          <View style={styles.container}>
+            <View style={styles.contentRow}>
+              <Text style={styles.detailTitle}>Lorem Ipsum is simply dummy text of the printing</Text>
+            </View>
+            <View style={styles.contentRow}>
+              <Text>2017-02-28</Text>
+            </View>
+            <View style={styles.contentRow}>
+              <View style={styles.rowText}>
+                <View style={styles.rowTextLeft}>
+                  <Ionicons style={styles.icon} name="ios-book" />
+                  <Text>69%</Text>
+                </View>
+                <View style={styles.rowTextRight}>
+                  <Ionicons style={styles.icon} name="ios-book" />
+                  <Text>2 hour 21 minutes</Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.contentRow}>
+              <Text>
+                Lorem Ipsum is simply dummy text of the printing
+                  and typesetting industry.
+              </Text>
+            </View>
           </View>
-          <Text>
-            Lorem Ipsum is simply dummy text of the printing
-              and typesetting industry.
-          </Text>
         </View>
       </View>
     )
@@ -216,13 +263,6 @@ const MySettingsScreen = ({ navigation }) => (
 );
 
 const PlayingTab = StackNavigator({
-  Detail: {
-    screen: MovieDetailScreen,
-    path: '/movie-detail',
-    navigationOptions: ({ navigation }) => ({
-      title: "Detail screen",
-    }),
-  },
   Playing: {
     screen: PlayingScreen,
     path: '/',
@@ -239,8 +279,14 @@ const PlayingTab = StackNavigator({
         </View>
       ) }
     },
+  },
+  Detail: {
+    screen: MovieDetailScreen,
+    path: '/movie-detail',
+    navigationOptions: ({ navigation }) => ({
+      title: "Detail screen",
+    }),
   }
-
 });
 
 const SettingsTab = StackNavigator({
@@ -266,9 +312,9 @@ const StacksInTabs = TabNavigator(
       path: '/movie-detail',
       navigationOptions: {
         tabBarLabel: 'Now Playing',
-        tabBarIcon: ({ tintColor, focused }) => {
-
-        }
+        tabBarIcon: ({ tintColor, focused }) => (
+          <Ionicons style={styles.tabbarIcon} name="ios-book" />
+        )
       },
     },
     SettingsTab: {
@@ -276,9 +322,9 @@ const StacksInTabs = TabNavigator(
       path: '/settings',
       navigationOptions: {
         tabBarLabel: 'Top Rated',
-        tabBarIcon: ({ tintColor, focused }) => {
-
-        }
+        tabBarIcon: ({ tintColor, focused }) => (
+          <Ionicons style={styles.tabbarIcon} name="ios-book" />
+        )
       },
     },
   },
