@@ -11,11 +11,12 @@ import {
   StyleSheet,
   Dimensions,
   RefreshControl,
-  TouchableHighlight
+  TouchableHighlight,
+  AlertIOS
 } from 'react-native';
 
 import { StackNavigator, TabNavigator } from 'react-navigation';
-
+import ProgressHUD from 'react-native-progress-hud';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SampleText from './SampleText';
 import Search from 'react-native-search-box';
@@ -121,7 +122,6 @@ class Movie extends Component {
 let api_url = "https://api.themoviedb.org/3/movie/now_playing?api_key=dee541d3e694c0defad6f7ef8115008e"
 
 class MoviesListScreen extends Component {
-
   constructor(props) {
     super(props)
 
@@ -129,7 +129,8 @@ class MoviesListScreen extends Component {
 
     this.state = {
       dataSource: ds.cloneWithRows([]),
-      refreshing: false
+      refreshing: false,
+      isHudVisible: false
     };
 
     if(this.props.navigation.state.routeName == "Playing") {
@@ -138,6 +139,21 @@ class MoviesListScreen extends Component {
       this.apiUrl = "https://api.themoviedb.org/3/movie/top_rated?api_key=dee541d3e694c0defad6f7ef8115008e"
     }
 
+    this.networkErrorShown = false
+  }
+
+  showProgressHUD() {
+    this.setState({
+      isHudVisible: true
+    })
+  }
+
+  hideProgressHUD() {
+    setTimeout(() => {
+      this.setState({
+        isHudVisible: false
+      })
+    }, 1000)
   }
 
   componentDidMount() {
@@ -145,18 +161,30 @@ class MoviesListScreen extends Component {
   }
 
   getMoviesFromApiAsync() {
+
+    this.showProgressHUD()
+
     return fetch(this.apiUrl)
       .then((response) => response.json())
       .then((responseJson) => {
 
+        this.networkErrorShown = false
         this.setState({refreshing: false})
-
+        this.hideProgressHUD()
         this.setState({
           movies: responseJson.results,
           dataSource: this.state.dataSource.cloneWithRows(responseJson.results)
         })
       })
-      .catch((error) => { console.error(error); });
+      .catch((error) => {
+        console.log("api error", error)
+
+        if(!this.networkErrorShown) {
+          AlertIOS.alert( 'Network error.', 'There is no internet connection. Please check again.' );
+        }
+
+        this.networkErrorShown = true
+      });
   }
 
   onRefresh() {
@@ -171,13 +199,18 @@ class MoviesListScreen extends Component {
   }
 
   render() {
+
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        enableEmptySections={true}
-        refreshControl={ <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} /> }
-        renderRow={(rowData) => this.renderRowData(rowData)}
-      />
+      <View>
+        <ProgressHUD isVisible={this.state.isHudVisible} isDismissble />
+
+        <ListView
+          dataSource={this.state.dataSource}
+          enableEmptySections={true}
+          refreshControl={ <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} /> }
+          renderRow={(rowData) => this.renderRowData(rowData)}
+        />
+      </View>
     )
   }
 }
