@@ -1,6 +1,6 @@
-# Project 1 - Assignment 1 - React Native Coderschool
+# Project 1 - Assignment 1 - React Native coderschool.vn
 
-**Name of your app** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/#).
+**RNAssignment1** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/#).
 
 Time spent: **16** hours spent in total
 
