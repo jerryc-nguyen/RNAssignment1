@@ -43,14 +43,13 @@ let { height, width } = Dimensions.get('window');
 let imageWidth = 100;
 let imageHeight = 150;
 let colMargin = 5;
-let rightColWidth = width - 5 - imageWidth;
+let rightColWidth = width - 20 - imageWidth;
 
 const movieStyles = StyleSheet.create({
   container: {
     flex:1,
     flexDirection: 'row',
-    marginTop: colMargin,
-    marginBottom: colMargin
+    padding: 10
   },
   image: {
     width: imageWidth,
@@ -82,12 +81,18 @@ class Movie extends Component {
     super(props)
 
     this.state = {
-      data: props.data
+      movie: props.movie
     };
+
+    this.movie = props.movie
   }
 
   onClicked() {
     this.props.navigation.navigate('Detail', { id: 'Jordan' })
+  }
+
+  posterPath() {
+    return `https://image.tmdb.org/t/p/w342${this.movie.poster_path}`
   }
 
   render() {
@@ -97,48 +102,66 @@ class Movie extends Component {
           <View style={movieStyles.leftCol}>
             <Image
               style={movieStyles.image}
-              source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}>
+              source={{uri: this.posterPath()}}>
             </Image>
           </View>
 
           <View style={movieStyles.rightCol}>
-            <Text style={movieStyles.title}>Lorem Ipsum is simply dummy</Text>
-
-            <Text style={movieStyles.content}>Lorem Ipsum is simply dummy text of the printing
-              and typesetting industry.
-              Lorem Ipsum has been the industry's standard dummy text ever since the
-            </Text>
-
+            <Text style={movieStyles.title}>{this.movie.title}</Text>
+            <Text style={movieStyles.content}>{this.movie.overview.substring(0, 100)}...</Text>
           </View>
+
         </View>
       </TouchableHighlight>
     )
   }
 }
 
+
+let api_url = "https://api.themoviedb.org/3/movie/now_playing?api_key=dee541d3e694c0defad6f7ef8115008e"
+
 class PlayingScreen extends Component {
+
   constructor(props) {
     super(props)
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
-      dataSource: ds.cloneWithRows(['row 1', 'row 2']),
+      dataSource: ds.cloneWithRows([]),
       refreshing: false
     };
   }
 
+  componentDidMount() {
+    this.getMoviesFromApiAsync()
+  }
+
+
+  getMoviesFromApiAsync() {
+    console.log("API calling", api_url)
+    return fetch(api_url)
+      .then((response) => response.json())
+      .then((responseJson) => {
+
+        this.setState({refreshing: false})
+
+        this.setState({
+          movies: responseJson.results,
+          dataSource: this.state.dataSource.cloneWithRows(responseJson.results)
+        })
+      })
+      .catch((error) => { console.error(error); });
+  }
+
   onRefresh() {
     this.setState({refreshing: true})
-
-    setTimeout( () => {
-      this.setState({refreshing: false})
-    }, 1000)
+    this.getMoviesFromApiAsync()
   }
 
   renderRowData(rowData) {
     return (
-      <Movie data={rowData} navigation={this.props.navigation}/>
+      <Movie movie={rowData} navigation={this.props.navigation}/>
     )
   }
 
@@ -146,6 +169,7 @@ class PlayingScreen extends Component {
     return (
       <ListView
         dataSource={this.state.dataSource}
+        enableEmptySections={true}
         refreshControl={ <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} /> }
         renderRow={(rowData) => this.renderRowData(rowData)}
       />
@@ -208,7 +232,7 @@ class MovieDetailScreen extends Component {
     super(props)
 
     this.state = {
-      data: props.data
+      movie: props.movie
     };
   }
 
