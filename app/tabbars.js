@@ -32,7 +32,7 @@ const MyNavScreen = ({ navigation, banner }) => (
       title="Open notifications screen"
     />
     <Button
-      onPress={() => navigation.navigate('SettingsTab')}
+      onPress={() => navigation.navigate('TopRatedTab')}
       title="Go to settings tab"
     />
     <Button onPress={() => navigation.goBack(null)} title="Go back" />
@@ -120,7 +120,7 @@ class Movie extends Component {
 
 let api_url = "https://api.themoviedb.org/3/movie/now_playing?api_key=dee541d3e694c0defad6f7ef8115008e"
 
-class PlayingScreen extends Component {
+class MoviesListScreen extends Component {
 
   constructor(props) {
     super(props)
@@ -131,16 +131,21 @@ class PlayingScreen extends Component {
       dataSource: ds.cloneWithRows([]),
       refreshing: false
     };
+
+    if(this.props.navigation.state.routeName == "Playing") {
+      this.apiUrl = "https://api.themoviedb.org/3/movie/now_playing?api_key=dee541d3e694c0defad6f7ef8115008e"
+    } else {
+      this.apiUrl = "https://api.themoviedb.org/3/movie/top_rated?api_key=dee541d3e694c0defad6f7ef8115008e"
+    }
+
   }
 
   componentDidMount() {
     this.getMoviesFromApiAsync()
   }
 
-
   getMoviesFromApiAsync() {
-    console.log("API calling", api_url)
-    return fetch(api_url)
+    return fetch(this.apiUrl)
       .then((response) => response.json())
       .then((responseJson) => {
 
@@ -228,7 +233,6 @@ class MovieDetailScreen extends Component {
 
   constructor(props) {
     super(props)
-    console.log(props.navigation)
     this.params = props.navigation.state.params
 
     this.state = {
@@ -285,20 +289,17 @@ const MySettingsScreen = ({ navigation }) => (
 
 const PlayingTab = StackNavigator({
   Playing: {
-    screen: PlayingScreen,
-    path: '/',
-    navigationOptions: {
-      header: (props) => { return (
-        <View style={{marginTop: 25}}>
-          <Search
-            ref="search_box"
-            /**
-            * There many props that can customizable
-            * Please scroll down to Props section
-            */
-          />
-        </View>
-      ) }
+    screen: MoviesListScreen,
+    path: '/playing',
+    navigationOptions: ({navigation}) => {
+      return {
+        header: (props) => { return (
+            <View style={{marginTop: 25}}>
+              <Search ref="search_box" />
+            </View>
+          )
+        }
+      }
     },
   },
   Detail: {
@@ -310,20 +311,28 @@ const PlayingTab = StackNavigator({
   }
 });
 
-const SettingsTab = StackNavigator({
-  Settings: {
-    screen: MySettingsScreen,
-    path: '/',
-    navigationOptions: () => ({
-      title: 'Settings',
+const TopRatedTab = StackNavigator({
+  TopRated: {
+    screen: MoviesListScreen,
+    path: '/top-rated',
+    navigationOptions: ({navigation}) => {
+      return {
+        header: (props) => { return (
+            <View style={{marginTop: 25}}>
+              <Search ref="search_box" />
+            </View>
+          )
+        }
+      }
+    }
+  },
+  Detail: {
+    screen: MovieDetailScreen,
+    path: '/movie-detail',
+    navigationOptions: ({ navigation }) => ({
+      title: "Detail screen",
     }),
-  },
-  NotifSettings: {
-    screen: MyNotificationsSettingsScreen,
-    navigationOptions: {
-      title: 'Notifications',
-    },
-  },
+  }
 });
 
 const StacksInTabs = TabNavigator(
@@ -338,9 +347,9 @@ const StacksInTabs = TabNavigator(
         }
       }
     },
-    SettingsTab: {
-      screen: SettingsTab,
-      path: '/settings',
+    TopRatedTab: {
+      screen: TopRatedTab,
+      path: '/top_rated',
       navigationOptions: {
         tabBarLabel: 'Top Rated',
         tabBarIcon: ({ tintColor, focused }) => (
