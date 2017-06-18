@@ -196,7 +196,7 @@ let styles = StyleSheet.create({
     bottom: 20,
     left: (width - 320)/2,
     right: 0,
-    backgroundColor: "#fff"
+    backgroundColor: "rgba(0,0,0,.6)"
   },
   rowText: {
     flex: 1,
@@ -214,17 +214,22 @@ let styles = StyleSheet.create({
   },
   icon: {
     marginRight: 5,
-    fontSize: 17
+    fontSize: 17,
+    color: "#fff"
   },
   contentRow: {
     padding: 10
   },
   detailTitle: {
     fontSize: 17,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: "#fff"
   },
   tabbarIcon: {
     fontSize: 30
+  },
+  textStyle: {
+    color: "#fff"
   }
 });
 
@@ -255,22 +260,25 @@ class MovieDetailScreen extends Component {
               <Text style={styles.detailTitle}>{this.state.movie.title}</Text>
             </View>
             <View style={styles.contentRow}>
-              <Text>{this.state.movie.release_date}</Text>
+              <View style={styles.rowText}>
+                <Ionicons style={styles.icon} name="ios-calendar" />
+                <Text style={styles.textStyle}>{this.state.movie.release_date}</Text>
+              </View>
             </View>
             <View style={styles.contentRow}>
               <View style={styles.rowText}>
                 <View style={styles.rowTextLeft}>
                   <Ionicons style={styles.icon} name="ios-star" />
-                  <Text>{this.state.movie.vote_average}</Text>
+                  <Text style={styles.textStyle}>{this.state.movie.vote_average}</Text>
                 </View>
                 <View style={styles.rowTextRight}>
                   <Ionicons style={styles.icon} name="ios-clock" />
-                  <Text>2 hour 21 minutes</Text>
+                  <Text style={styles.textStyle}>2 hour 21 minutes</Text>
                 </View>
               </View>
             </View>
             <View style={styles.contentRow}>
-              <Text>{this.state.movie.overview}</Text>
+              <Text style={styles.textStyle}>{this.state.movie.overview}</Text>
             </View>
           </View>
         </View>
