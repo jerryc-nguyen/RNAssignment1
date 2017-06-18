@@ -18,27 +18,7 @@ import {
 import { StackNavigator, TabNavigator } from 'react-navigation';
 import ProgressHUD from 'react-native-progress-hud';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import SampleText from './SampleText';
 import Search from 'react-native-search-box';
-
-const MyNavScreen = ({ navigation, banner }) => (
-  <ScrollView>
-    <SampleText>{banner}</SampleText>
-    <Button
-      onPress={() => navigation.navigate('Detail', { name: 'Jordan' })}
-      title="Open profile screen"
-    />
-    <Button
-      onPress={() => navigation.navigate('NotifSettings')}
-      title="Open notifications screen"
-    />
-    <Button
-      onPress={() => navigation.navigate('TopRatedTab')}
-      title="Go to settings tab"
-    />
-    <Button onPress={() => navigation.goBack(null)} title="Go back" />
-  </ScrollView>
-);
 
 let { height, width } = Dimensions.get('window');
 let imageWidth = 100;
@@ -117,9 +97,6 @@ class Movie extends Component {
     )
   }
 }
-
-
-let api_url = "https://api.themoviedb.org/3/movie/now_playing?api_key=dee541d3e694c0defad6f7ef8115008e"
 
 class MoviesListScreen extends Component {
   constructor(props) {
@@ -319,14 +296,6 @@ class MovieDetailScreen extends Component {
     )
   }
 }
-
-const MyNotificationsSettingsScreen = ({ navigation }) => (
-  <MyNavScreen banner="Notifications Screen" navigation={navigation} />
-);
-
-const MySettingsScreen = ({ navigation }) => (
-  <MyNavScreen banner="Settings Screen" navigation={navigation} />
-);
 
 const PlayingTab = StackNavigator({
   Playing: {
